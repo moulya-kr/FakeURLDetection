@@ -2,14 +2,20 @@ import re
 import pandas as pd
 
 def extract_features(url):
-    url_length = len(url)
-    has_ip = 1 if re.search(r'\d+\.\d+\.\d+\.\d+', url) else 0
-    https_count = url.count("https")
+    # Feature 1: Does URL use HTTPS?
+    has_https = 1 if url.startswith("https") else 0
 
-    # Keep same order and names as during training
-    features = pd.DataFrame([{
-        "url_length": url_length,
-        "has_ip": has_ip,
-        "https_count": https_count
+    # Feature 2: Count how many digits (0–9) are in the URL
+    num_digits = len(re.findall(r'\d', url))
+
+    # Feature 3: Count special characters like ?, =, -, _, @, etc.
+    num_special = len(re.findall(r'[?=\-_@]', url))
+
+    # Return DataFrame with the *same feature names as model training*
+    features_df = pd.DataFrame([{
+        'has_https': has_https,
+        'num_digits': num_digits,
+        'num_special': num_special
     }])
-    return features
+
+    return features_df

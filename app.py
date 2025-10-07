@@ -16,10 +16,16 @@ def home():
 def predict():
     url = request.form['url']
     features = extract_features(url)
+
+    # Convert to 2D array for model input
+    import numpy as np
+    features = np.array(features).reshape(1, -1)
+
     prediction = model.predict(features)[0]
 
-    result = "Unsafe / Fake Website ⚠️" if prediction == 1 else "Safe Website ✅"
-    return render_template('index.html', url=url, result=result)
+    if prediction == 1:
+        result = "Fake / Unsafe Website"
+    else:
+        result = "Safe Website"
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    return render_template('index.html', prediction_text=f"Result: {result}")

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import os, joblib
-from utils import extract_features  # make sure you have this file
+from extract_features import extract_features  # make sure you have this file
 
 app = Flask(__name__)
 

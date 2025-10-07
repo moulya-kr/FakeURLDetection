@@ -14,8 +14,12 @@ def predict():
     url = request.form['url']
     features_df = extract_features(url)
     prediction = model.predict(features_df)[0]
-    result = "Legitimate Website ✅" if prediction == 0 else "Phishing Website 🚨"
-    return render_template('index.html', result=result)
+    result = 'Legitimate Website' if prediction == 1 else 'Phishing Website'
+
+    # Pass a flag to the template to trigger alert
+    alert_type = 'success' if result == 'Legitimate Website' else 'danger'
+    return render_template('index.html', prediction_text=result, alert_type=alert_type, url=url)
+
 
 if __name__ == '__main__':
     import os

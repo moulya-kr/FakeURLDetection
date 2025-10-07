@@ -16,6 +16,26 @@
         <input type="text" name="url" placeholder="Enter URL here..." required>
         <input type="submit" value="Check">
     </form>
+    {% if prediction_text %}
+<div class="alert alert-{{ alert_type }} mt-4" role="alert">
+  <strong>{{ prediction_text }}!</strong>
+  {% if alert_type == 'danger' %}
+    ⚠️ The URL <b>{{ url }}</b> seems suspicious. Avoid clicking or sharing it!
+  {% else %}
+    ✅ The URL <b>{{ url }}</b> appears safe.
+  {% endif %}
+</div>
+
+<script>
+  // Popup alert
+  if ("{{ alert_type }}" === "danger") {
+      alert("⚠️ Warning! The entered URL appears to be a Phishing Website!");
+  } else if ("{{ alert_type }}" === "success") {
+      alert("✅ The entered URL appears to be Legitimate.");
+  }
+</script>
+{% endif %}
+
     {% if result %}
     <div class="result">{{ result }}</div>
     {% endif %}

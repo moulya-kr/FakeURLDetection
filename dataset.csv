@@ -1,4 +1,4 @@
-url,has_https,num_digits,num_special,label
+url_length,num_digits,num_special,has_https,has_ip,https_count
 https://google.com,1,0,0,legit
 http://login-update-security.com,0,3,2,phishing
 https://microsoft.com,1,0,0,legit

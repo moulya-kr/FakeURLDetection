@@ -1,0 +1,7 @@
+url,has_https,num_digits,num_special,label
+https://google.com,1,0,0,legit
+http://login-update-security.com,0,3,2,phishing
+https://microsoft.com,1,0,0,legit
+http://secure-paypal-login.net,0,2,1,phishing
+https://amazon.com,1,0,0,legit
+http://verify-bank-account.info,0,4,3,phishing

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>URL Analysis Result</h2>
+    <p><b>URL:</b> {{ url }}</p>
+    <p style="color:{{ color }};">{{ result }}</p>
+    <a href="/">🔙 Check Another URL</a>
+  </div>
+</body>
+</html>

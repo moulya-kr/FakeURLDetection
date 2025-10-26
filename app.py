@@ -1,10 +1,11 @@
 import requests
+import os
 from flask import Flask, render_template, request
 import joblib
 from utils.extract_features import extract_features
 
 # Replace with your actual API key from Google
-API_KEY = "AIzaSyAv6MRzju5zlERYH87wGKbsULXRlDx6Sm8"
+API_KEY = os.getenv("API_KEY") 
 
 def check_with_google_safe_browsing(url):
     api_url = f"https://safebrowsing.googleapis.com/v4/threatMatches:find?key={API_KEY}"

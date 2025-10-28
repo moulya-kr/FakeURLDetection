@@ -5,11 +5,67 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Analysis Result</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            text-align: center;
+            padding: 50px;
+        }
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 20px;
+            color: white;
+            margin-top: 30px;
+            display: inline-block;
+        }
+        .safe {
+            background-color: #4CAF50;
+            animation: fadeIn 1s;
+        }
+        .phish {
+            background-color: #f44336;
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        .btn {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
     <h2>URL Analysis Result</h2>
-    <p><b>URL:</b> {{ url }}</p>
-    <p style="color:{{ color }};">{{ result }}</p>
-    <a href="/">🔙 Check Another URL</a>
-  </div>
+    <p><strong>URL:</strong> {{ url }}</p>
+    <p><strong>Google Safe Browsing:</strong> {{ google_result }}</p>
+
+    {% if 'phish' in prediction.lower() %}
+        <div class="alert phish">⚠️ Warning! This might be a Phishing Website!</div>
+    {% elif 'legit' in prediction.lower() or 'safe' in prediction.lower() %}
+        <div class="alert safe">✅ This website appears Safe!</div>
+    {% else %}
+        <div class="alert">⚠️ Unable to determine the safety of this URL.</div>
+    {% endif %}
+
+    <button class="btn" onclick="window.location.href='/'">🔙 Check Another URL</button>
+
+</body>
+</html>
+
 </body>
 </html>

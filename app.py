@@ -17,11 +17,11 @@ GOOGLE_API_URL = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
 
 # ---------------- EMAIL ALERT ----------------
 def send_alert_email(url):
-    print("📧 EMAIL FUNCTION CALLED")
+    print("📧 EMAIL FUNCTION CALLED for:", url)
 
     sender_email = "moulyakrm@gmail.com"
     receiver_email = "moulyakrm@gmail.com"
-    password = "jdawfvlcjihwwnnd"
+    password = "YOUR_NEW_APP_PASSWORD"
 
     subject = "⚠️ PHISHING WEBSITE ALERT"
 
@@ -40,12 +40,16 @@ Do NOT open this link.
     msg.attach(MIMEText(body, 'plain'))
 
     try:
+        print("🔄 Connecting to Gmail server...")
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
+        print("🔐 Logging in...")
         server.login(sender_email, password)
+        print("📨 Sending message...")
         server.send_message(msg)
         server.quit()
         print("✅ EMAIL SENT SUCCESSFULLY")
+
     except Exception as e:
         print("❌ EMAIL FAILED:", e)
 
@@ -86,35 +90,59 @@ def check_with_google_safe_browsing(url):
 def home():
     return render_template('index.html')
 
+import pandas as pd
+import numpy as np
 
 @app.route('/predict', methods=['POST'])
 def predict():
 
     url = request.form['url']
-    print("✅ URL received:", url)
+    print("\n✅ URL received:", url)
 
-    # 1. Model Prediction
-    features = extract_features(url)
-    model_result = model.predict(features)[0]   # 0 = phishing, 1 = safe
+    # Basic check for valid URL
+    if not url.startswith("http"):
+        return render_template(
+            "index.html",
+            prediction_text="❌ Invalid URL (must start with http or https)",
+            alert_type="danger",
+            url=url
+        )
 
-    # 2. Google Safe Browsing
-    google_result = check_with_google_safe_browsing(url)
+    # 1. Extract features
+    features = extract_features(url)   # <-- NOW features is defined
+    print("📌 Extracted Features:\n", features)
 
-    # 3. Final decision
-    if model_result == 0 or google_result == True:
-        final_label = "⚠️ PHISHING WEBSITE DETECTED"
+    # 2. Model probability
+    prob = model.predict_proba(features)[0][1]   # phishing probability
+    prediction = model.predict(features)[0]
+
+    print("🤖 Model Prediction (0=safe, 1=phishing):", prediction)
+    print("🔢 Phishing Probability:", prob)
+
+    # 3. Google Safe Browsing check
+    unsafe_google = check_with_google_safe_browsing(url)
+    print("🌐 Google Unsafe?:", unsafe_google)
+
+    # 4. Final SMART DECISION
+    if prob > 0.8:
+        result_text = "⚠️ Phishing Website"
         alert_type = "danger"
+        send_alert_email(url)
 
-        # Send email
+    elif unsafe_google and prob > 0.4:
+        result_text = "⚠️ Phishing Website"
+        alert_type = "danger"
         send_alert_email(url)
 
     else:
-        final_label = "✅ SAFE WEBSITE"
+        result_text = "✅ Legitimate Website"
         alert_type = "success"
+
+    print("✅ Final Result:", result_text)
 
     return render_template(
         "index.html",
-        prediction_text=final_label,
+        prediction_text=result_text,
         alert_type=alert_type,
         url=url
     )

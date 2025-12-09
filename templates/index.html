@@ -1,39 +1,50 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Fake URL Detection</title>
+    <meta charset="utf-8" />
     <style>
-        body { font-family: Arial; text-align: center; background-color: #f8f9fa; }
-        form { margin-top: 100px; }
-        input[type=text] { width: 50%; padding: 10px; font-size: 16px; }
+        body { font-family: Arial; text-align: center; background-color: #f8f9fa; padding: 40px; }
+        form { margin-top: 40px; }
+        input[type=text] { width: 60%; padding: 10px; font-size: 16px; }
         input[type=submit] { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
-        .result { margin-top: 20px; font-size: 20px; }
+        .alert { margin-top: 20px; padding: 15px; border-radius: 6px; display:inline-block; color: white; }
+        .danger { background: #d9534f; }
+        .success { background: #5cb85c; }
+        .warning { background: #f0ad4e; }
     </style>
 </head>
 <body>
     <h1>🔍 Fake URL Detection</h1>
     <form method="POST" action="/predict">
-        <input type="text" name="url" placeholder="Enter URL here..." required>
+        <input type="text" name="url" placeholder="Enter URL here (must start with http/https)" required>
         <input type="submit" value="Check">
     </form>
-    {% if prediction_text %}
-<div class="alert alert-{{ alert_type }} mt-4" role="alert">
-  <strong>{{ prediction_text }}!</strong>
-  {% if alert_type == 'danger' %}
-    ⚠️ The URL <b>{{ url }}</b> seems suspicious. Avoid clicking or sharing it!
-  {% else %}
-    ✅ The URL <b>{{ url }}</b> appears safe.
-  {% endif %}
-</div>
 
-<script>
-  // Popup alert
-  if ("{{ alert_type }}" === "danger") {
-      alert("⚠️ Warning! The entered URL appears to be a Phishing Website!");
-  } else if ("{{ alert_type }}" === "success") {
-      alert("✅ The entered URL appears to be Legitimate.");
-  }
-</script>
-{% endif %}
+    {% if prediction_text %}
+        <div class="alert {{ alert_type }}">
+            <strong>{{ prediction_text }}</strong>
+            <div style="margin-top:8px;">
+            {% if alert_type == 'danger' %}
+                ⚠️ The URL <b>{{ url }}</b> seems suspicious. Avoid clicking it!
+            {% elif alert_type == 'warning' %}
+                ⚠️ The URL <b>{{ url }}</b> is suspicious. Consider double-checking.
+            {% else %}
+                ✅ The URL <b>{{ url }}</b> appears safe.
+            {% endif %}
+            </div>
+        </div>
+
+        <script>
+            // Popup alert
+            (function(){
+                var t = "{{ alert_type }}";
+                if(t === "danger") alert("⚠️ Warning! The entered URL appears to be a PHISHING website!");
+                else if(t === "warning") alert("⚠️ The entered URL is suspicious.");
+                else if(t === "success") alert("✅ The entered URL appears safe.");
+            })();
+        </script>
+    {% endif %}
 </body>
 </html>
